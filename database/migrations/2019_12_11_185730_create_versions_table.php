@@ -16,7 +16,7 @@ class CreateVersionsTable extends Migration
         Schema::create('versions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('Path',191);
-            $table->float('Version');
+            $table->float('Version')->unique();
             $table->timestamps();
         });
     }

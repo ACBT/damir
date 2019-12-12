@@ -177,7 +177,7 @@
                     </div>
                 </li>
                 <li style="margin-top: 15px">
-                    <button type="button" id="save1" onclick="" class="btn btn-primary">
+                    <button type="button" id="save1" onclick="addversion()" class="btn btn-primary">
                         {{ __('Добавить') }}
                     </button>
                 </li>
@@ -192,11 +192,37 @@
                 var Photo = $('#Photo').val();
                 var Amount = $('#Amount').val();
                 var Price = $('#Price').val();
-                alert(Photo);
                 $.ajax({
                     url: '{{route('Tovar.store')}}',
                     type: "POST",
                     data: {"_token": $('meta[name="csrf-token"]').attr('content'), Name:Name,Photo:Photo,Amount:Amount, Price:Price, id:id},
+                    headers: {
+                        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        $('#Name').val('');
+                        $('#Photo').val('');
+                        $('#Amount').val('');
+                        $('#Price').val('');
+                        $('#save').text('Добавить');
+                        document.getElementById('save').dataset.idi = 0;
+                        location.reload();
+                        alert('Выполнено');
+
+                    },
+                    error: function (msg) {
+                        alert('Ошибка: заполните обязательные для ввода поля или данная запись уже существует.');
+                    }
+                });
+            };
+
+            function addversion(){
+                var Path = $('#Path').val();
+                var Version = $('#Version').val();
+                $.ajax({
+                    url: '{{route('version.store')}}',
+                    type: "POST",
+                    data: {"_token": $('meta[name="csrf-token"]').attr('content'), Path:Path,Version:Version},
                     headers: {
                         'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
                     },
@@ -255,6 +281,24 @@
                     }
                 });
             };
+
+            function versiondelete(id){
+                $.ajax({
+                    url: '{{route('version.destroy')}}',
+                    type: "POST",
+                    data: {"_token": $('meta[name="csrf-token"]').attr('content'), id:id},
+                    headers: {
+                        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        alert('Удалено');
+                        location.reload();
+                    },
+                    error: function (msg) {
+                        alert('Ошибка: заполните обязательные для ввода поля или данная запись уже существует.');
+                    }
+                });
+            };
         </script>
 
     @endif
@@ -286,7 +330,7 @@
         <div id="frontpage-content">
             <h3 style="margin-bottom: 10px">Отзывы</h3>
             @if($stars->count() != 0)
-            <h4 style="margin-top: 0">Общая оценка: {{round(($stars->sum('Stars') / $stars->count()), 1) }}</h4>
+            <h4 style="margin-top: 0">Общая оценка: {{round((\App\Stars::sum('Stars') / $stars->count()), 1) }}</h4>
             <p>{{ $stars->links('vendor.pagination.simple-default') }}</p>
             <ul class="blue-bullets">
                 @foreach($stars as $star)
@@ -353,9 +397,17 @@
         <div id="frontpage-content">
             <h3>Эльдомаркет</h3>
             <p>Предоставляет возможность манипуляци полным путём товарооборота</p>
+            @if($versions->count() != 0)
+                <p>{{ $versions->links('vendor.pagination.simple-default') }}</p>
+                <p>Последняя верси: {{\App\Version::max('Version')}}</p>
             <ul class="blue-bullets">
-                <li>Скачивание программы</li>
+                @foreach($versions as $version)
+                    <li><a href="">Версия {{$version->Version}} <span><a id="{{$version->id}}" onclick="versiondelete(this.id)" href=""> Удалить</a></span></a></li>
+                @endforeach
             </ul>
+            @else
+                <h4>Не ещё ни одной версии</h4>
+            @endif
         </div>
         <!--end frontpage-content-->
         <div id="frontpage-sidebar">

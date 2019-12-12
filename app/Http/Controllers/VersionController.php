@@ -36,7 +36,8 @@ class VersionController extends Controller
     public function store(Request $request)
     {
         Version::create([
-
+            'Path' =>'asdasd',
+            'Version' => $request->Version
         ]);
 
         $date = 1;
@@ -84,8 +85,12 @@ class VersionController extends Controller
      * @param  \App\Version  $version
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Version $version)
+    public function destroy(Request $request)
     {
-        //
+        Version::find($request->id)->delete();
+
+        $data = 1;
+
+        return $data;
     }
 }
