@@ -35,7 +35,13 @@ class VersionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Version::create([
+
+        ]);
+
+        $date = 1;
+
+        return $date;
     }
 
     /**

@@ -15,7 +15,7 @@ class CreateTovarsTable extends Migration
     {
         Schema::create('tovars', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('Name', 191);
+            $table->string('Name', 191)->unique();
             $table->string('Photo', 191);
             $table->integer('Amount');
             $table->integer('Price');

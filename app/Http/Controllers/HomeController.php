@@ -22,6 +22,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('app',['tovars' => Tovar::all(), 'stars' => Stars::all()]);
+        return view('app',['tovars' => Tovar::all(), 'stars' => Stars::paginate(5)]);
     }
 }

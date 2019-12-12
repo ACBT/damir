@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="{{asset('styles/style.css')}}" />
     <link type="text/css" rel="stylesheet" href="{{asset('styles/skin.css')}}" />
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript" src="{{asset('js/jquery.jcarousel.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/initSlider.js')}}"></script>
@@ -15,7 +16,7 @@
     <div id="header"> <img src="images/logo.png" />
         <div id="nav">
             <ul class="menu">
-                <li class=""><a href="index.html">Главная</a></li>
+                <li class=""><a href="{{route('home')}}">Главная</a></li>
                 @guest
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">{{ __('Войти') }}</a>
@@ -103,7 +104,7 @@
                     <label for="Photo" class="col-md-4 col-form-label text-md-right">{{ __('Фото') }}</label>
 
                     <div class="col-md-6">
-                        <input id="Photo" type="file" class="form-control @error('Photo') is-invalid @enderror" name="Photo" value="{{ old('Photo') }}" required autocomplete="Photo" autofocus>
+                        <input id="Photo" type="file" class="form-control @error('Photo') is-invalid @enderror" name="Photo" accept="image/*" value="{{ old('Photo') }}" required autocomplete="Photo" autofocus>
 
                         @error('Photo')
                         <span class="invalid-feedback" role="alert">
@@ -191,6 +192,7 @@
                 var Photo = $('#Photo').val();
                 var Amount = $('#Amount').val();
                 var Price = $('#Price').val();
+                alert(Photo);
                 $.ajax({
                     url: '{{route('Tovar.store')}}',
                     type: "POST",
@@ -207,27 +209,6 @@
                         document.getElementById('save').dataset.idi = 0;
                         location.reload();
                         alert('Выполнено');
-
-                    },
-                    error: function (msg) {
-                        alert('Ошибка: заполните обязательные для ввода поля или данная запись уже существует.');
-                    }
-                });
-            };
-
-            function starscreate(){
-                var Stars = $('#Stars').val();
-                var Description = $('#Description').val();
-                $.ajax({
-                    url: '{{route('Stars.store')}}',
-                    type: "POST",
-                    data: {"_token": $('meta[name="csrf-token"]').attr('content'), Stars:Stars,Description:Description,},
-                    headers: {
-                        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function (data) {
-                        location.reload();
-                        alert('Спасибо за отзыв');
 
                     },
                     error: function (msg) {
@@ -277,20 +258,49 @@
         </script>
 
     @endif
+        <script>
+            function starscreate(){
+                var Stars = $('#Stars').val();
+                var Description = $('#Description').val();
+                $.ajax({
+                    url: '{{route('Stars.store')}}',
+                    type: "POST",
+                    data: {"_token": $('meta[name="csrf-token"]').attr('content'), Stars:Stars,Description:Description,},
+                    headers: {
+                        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (data) {
+                        location.reload();
+                        alert('Спасибо за отзыв');
+
+                    },
+                    error: function (msg) {
+                        alert('Ошибка: заполните обязательные для ввода поля или данная запись уже существует.');
+                    }
+                });
+            };
+        </script>
     @endif
 
     <div id="frontpage-main">
         <div id="frontpage-content">
-            <h3>Отзывы</h3>
+            <h3 style="margin-bottom: 10px">Отзывы</h3>
+            @if($stars->count() != 0)
+            <h4 style="margin-top: 0">Общая оценка: {{round(($stars->sum('Stars') / $stars->count()), 1) }}</h4>
+            <p>{{ $stars->links('vendor.pagination.simple-default') }}</p>
             <ul class="blue-bullets">
                 @foreach($stars as $star)
-                <li>
+                <li style="padding-bottom: 60px">
                     <p style="margin-bottom: 0">{{$star->user->Name}} {{$star->user->Surname}}</p>
                     <p style="margin-bottom: 0">{{$star->Description}}</p>
-                    <p style="margin-bottom: 0">Оценка: {{$star->Stars}}</p>
+                    <p style="margin-bottom: 0;">Оценка: {{$star->Stars}}</p>
                 </li>
                 @endforeach
             </ul>
+                @else
+                <p>Отзывов пока нет</p>
+            @endif
+
         </div>
         <!--end frontpage-content-->
         <div id="frontpage-sidebar">
@@ -302,7 +312,7 @@
                             <label for="Version" class="col-md-4 col-form-label text-md-right">{{ __('Оценка') }}</label>
 
                             <div class="col-md-6">
-                                <input id="Stars" type="number" class="form-control @error('Stars') is-invalid @enderror" max="5" min="1" name="Stars" value="{{ old('Stars') }}" required autocomplete="Stars" autofocus>
+                                <input id="Stars" type="number" class="form-control @error('Stars') is-invalid @enderror" maxlength="1" max="5" min="1" name="Stars" value="{{ old('Stars') }}" required autocomplete="Stars" autofocus>
                                 @error('Stars')
                                 <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
