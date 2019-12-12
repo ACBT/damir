@@ -46,7 +46,7 @@ class TovarController extends Controller
      */
     public function store(Request $request)
     {
-        dd(Storage::putFile('avatars', $request->file('Photo')));
+        //dd(Storage::putFile('avatars', $request->file('Photo')));
 
         if (Tovar::find($request->id)){
             Tovar::find($request->id)->update([

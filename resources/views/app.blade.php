@@ -56,6 +56,7 @@
         <!--end circles-->
         <div id="image-slider">
             <ul id="mycarousel" class="jcarousel-skin-tango">
+                @if($tovars->count() != 0)
                 @foreach($tovars as $tovar)
                 <li>
                     <span style="position: absolute; padding-left: 21px; padding-top: 15px">
@@ -64,7 +65,7 @@
                         <p style="margin-bottom: 0">Цена: {{$tovar->Price}}</p>
                         @if(Auth::user())
                             @if(Auth::user()->Type_User == 1)
-                        <p style="margin-bottom: 0"><a id="{{$tovar->id}}"  onclick="tovarindex(this.id)">редактировать</a></p>
+                        <p style="margin-bottom: 0; margin-top: 38px"><a id="{{$tovar->id}}"  onclick="tovarindex(this.id)">редактировать</a></p>
                         <p style="margin-bottom: 0"><a id="{{$tovar->id}}"  onclick="tovardelete(this.id)">удалить</a></p>
                             @endif
                         @endif
@@ -72,6 +73,9 @@
                     <img width="280" height="190" src="images/280x190.gif" alt="" />
                 </li>
                 @endforeach
+                    @else
+                    <h3 style="position: absolute">Товары отсуствуют</h3>
+                @endif
             </ul>
         </div>
         <!--end image-slider-->
